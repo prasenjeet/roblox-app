@@ -1,0 +1,58 @@
+{
+  "name": "ObbyGame",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "GameManager": {
+        "$path": "src/ServerScriptService/GameManager.server.lua"
+      },
+      "CoinService": {
+        "$path": "src/ServerScriptService/CoinService.server.lua"
+      },
+      "TimerService": {
+        "$path": "src/ServerScriptService/TimerService.server.lua"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "ObbyClient": {
+          "$path": "src/StarterPlayerScripts/ObbyClient.client.lua"
+        }
+      }
+    },
+    "StarterGui": {
+      "$className": "StarterGui",
+      "ObbyGui": {
+        "$className": "ScreenGui",
+        "$properties": {
+          "ResetOnSpawn": false,
+          "ZIndexBehavior": "Sibling"
+        },
+        "HUD": {
+          "$path": "src/StarterGui/ObbyGui/HUD.lua"
+        },
+        "FinishScreen": {
+          "$path": "src/StarterGui/ObbyGui/FinishScreen.lua"
+        }
+      }
+    },
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Shared": {
+        "$path": "src/ReplicatedStorage/Shared"
+      }
+    },
+    "Workspace": {
+      "$className": "Workspace",
+      "$properties": {
+        "Gravity": 196.2
+      },
+      "CourseTemplate": {
+        "$path": "src/Workspace/CourseTemplate.lua"
+      }
+    }
+  }
+}

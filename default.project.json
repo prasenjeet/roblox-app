@@ -20,6 +20,9 @@
         "$className": "StarterPlayerScripts",
         "ObbyClient": {
           "$path": "src/StarterPlayerScripts/ObbyClient.client.lua"
+        },
+        "TitleScreen": {
+          "$path": "src/StarterPlayerScripts/TitleScreen.client.lua"
         }
       }
     },

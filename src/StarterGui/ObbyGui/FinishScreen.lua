@@ -1,103 +1,113 @@
--- FinishScreen: full-screen overlay displayed when the player completes the course.
+-- RaceFinish: overlay shown when the player completes all laps.
 
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
 local function buildFinishScreen(screenGui)
     local overlay = Instance.new("Frame")
-    overlay.Name = "FinishScreen"
-    overlay.Size = UDim2.new(1, 0, 1, 0)
-    overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    overlay.BackgroundTransparency = 0.35
-    overlay.Visible = false
-    overlay.ZIndex = 5
-    overlay.Parent = screenGui
+    overlay.Name                   = "FinishScreen"
+    overlay.Size                   = UDim2.fromScale(1, 1)
+    overlay.BackgroundColor3       = Color3.fromRGB(0, 0, 0)
+    overlay.BackgroundTransparency = 0.4
+    overlay.Visible                = false
+    overlay.ZIndex                 = 10
+    overlay.Parent                 = screenGui
 
-    -- Card
     local card = Instance.new("Frame")
-    card.Name = "Card"
-    card.Size = UDim2.new(0, 420, 0, 320)
-    card.Position = UDim2.new(0.5, -210, 0.5, -160)
-    card.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    card.BorderSizePixel = 0
-    card.ZIndex = 6
-    card.Parent = overlay
+    card.Name               = "Card"
+    card.Size               = UDim2.new(0, 440, 0, 340)
+    card.Position           = UDim2.new(0.5, -220, 0.5, -170)
+    card.BackgroundColor3   = Color3.fromRGB(14, 16, 34)
+    card.BorderSizePixel    = 0
+    card.ZIndex             = 11
+    card.Parent             = overlay
+    local cc = Instance.new("UICorner"); cc.CornerRadius = UDim.new(0, 18); cc.Parent = card
+    local cs = Instance.new("UIStroke"); cs.Color = Color3.fromRGB(255, 200, 0); cs.Thickness = 3; cs.Parent = card
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 16)
-    corner.Parent = card
-
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, 0, 0, 60)
-    title.Position = UDim2.new(0, 0, 0, 16)
-    title.BackgroundTransparency = 1
-    title.Text = "COURSE COMPLETE!"
-    title.TextColor3 = Color3.fromRGB(255, 215, 0)
-    title.TextScaled = true
-    title.Font = Enum.Font.GothamBold
-    title.ZIndex = 7
-    title.Parent = card
-
-    local function makeStatLabel(name, defaultText, yOffset)
-        local lbl = Instance.new("TextLabel")
-        lbl.Name = name
-        lbl.Size = UDim2.new(1, -40, 0, 40)
-        lbl.Position = UDim2.new(0, 20, 0, yOffset)
-        lbl.BackgroundTransparency = 1
-        lbl.Text = defaultText
-        lbl.TextColor3 = Color3.fromRGB(220, 220, 220)
-        lbl.TextScaled = true
-        lbl.Font = Enum.Font.GothamSemibold
-        lbl.ZIndex = 7
-        lbl.Parent = card
-        return lbl
+    local function lbl(text, y, size, color)
+        local l = Instance.new("TextLabel")
+        l.Size                  = UDim2.new(1, -30, 0, size + 6)
+        l.Position              = UDim2.new(0, 15, 0, y)
+        l.BackgroundTransparency = 1
+        l.Text                  = text
+        l.TextColor3            = color or Color3.fromRGB(220, 220, 220)
+        l.Font                  = Enum.Font.GothamSemibold
+        l.TextSize              = size
+        l.ZIndex                = 12
+        l.Parent                = card
+        return l
     end
 
-    makeStatLabel("TimeLabel",   "Time: --",    90)
-    makeStatLabel("DeathsLabel", "Deaths: --",  140)
-    makeStatLabel("CoinsLabel",  "Coins: --",   190)
+    local titleLbl  = lbl("RACE COMPLETE!", 18,  32, Color3.fromRGB(255, 210, 0))
+    local posLbl    = lbl("",              68,  24, Color3.fromRGB(255, 255, 255))
+    local totalLbl  = lbl("Total: --",    108,  20)
+    local bestLbl   = lbl("Best Lap: --", 140,  20)
+    local coinLbl   = lbl("Coins: 0",     172,  20)
 
-    -- Play Again button
+    -- Divider
+    local div = Instance.new("Frame")
+    div.Size             = UDim2.new(1, -30, 0, 2)
+    div.Position         = UDim2.new(0, 15, 0, 205)
+    div.BackgroundColor3 = Color3.fromRGB(40, 48, 75)
+    div.BorderSizePixel  = 0; div.ZIndex = 12; div.Parent = card
+
+    -- Race Again button
     local btn = Instance.new("TextButton")
-    btn.Name = "PlayAgainButton"
-    btn.Size = UDim2.new(0, 180, 0, 48)
-    btn.Position = UDim2.new(0.5, -90, 1, -70)
-    btn.BackgroundColor3 = Color3.fromRGB(0, 180, 90)
-    btn.BorderSizePixel = 0
-    btn.Text = "Play Again"
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.TextScaled = true
-    btn.Font = Enum.Font.GothamBold
-    btn.ZIndex = 7
-    btn.Parent = card
-
-    local btnCorner = Instance.new("UICorner")
-    btnCorner.CornerRadius = UDim.new(0, 10)
-    btnCorner.Parent = btn
+    btn.Name             = "RaceAgainButton"
+    btn.Size             = UDim2.new(0, 200, 0, 52)
+    btn.Position         = UDim2.new(0.5, -100, 0, 220)
+    btn.BackgroundColor3 = Color3.fromRGB(38, 188, 72)
+    btn.BorderSizePixel  = 0
+    btn.Text             = "Race Again"
+    btn.TextColor3       = Color3.fromRGB(255, 255, 255)
+    btn.TextScaled       = true
+    btn.Font             = Enum.Font.GothamBold
+    btn.ZIndex           = 12
+    btn.Parent           = card
+    local bc = Instance.new("UICorner"); bc.CornerRadius = UDim.new(0, 12); bc.Parent = btn
 
     btn.MouseButton1Click:Connect(function()
-        -- Trigger a respawn by killing the character
-        local player = Players.LocalPlayer
-        local char = player.Character
-        local hum = char and char:FindFirstChildOfClass("Humanoid")
-        if hum then hum.Health = 0 end
         overlay.Visible = false
+        -- Respawn player to restart
+        local Players = game:GetService("Players")
+        local char    = Players.LocalPlayer.Character
+        local hum     = char and char:FindFirstChildOfClass("Humanoid")
+        if hum then hum.Health = 0 end
     end)
 
-    -- Animate card in when shown
+    -- Animate in when made visible
     overlay:GetPropertyChangedSignal("Visible"):Connect(function()
         if overlay.Visible then
-            card.Position = UDim2.new(0.5, -210, 0.6, -160)
+            card.Position = UDim2.new(0.5, -220, 0.58, -170)
             card.BackgroundTransparency = 1
             TweenService:Create(card,
-                TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-                { Position = UDim2.new(0.5, -210, 0.5, -160), BackgroundTransparency = 0 }
-            ):Play()
+                TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+                { Position = UDim2.new(0.5, -220, 0.5, -170),
+                  BackgroundTransparency = 0 }):Play()
         end
     end)
 
-    return overlay
+    -- Public API used by RaceClient
+    local refs = {
+        overlay   = overlay,
+        posLabel  = posLbl,
+        totalLabel = totalLbl,
+        bestLabel  = bestLbl,
+        coinLabel  = coinLbl,
+    }
+
+    function refs.show(position, totalTime, bestLap, coins)
+        local suffixes = { "1st", "2nd", "3rd", "4th", "5th", "6th" }
+        posLbl.Text   = "You finished " .. (suffixes[position] or (position .. "th")) .. "!"
+        local function fmt(s)
+            return string.format("%d:%05.2f", math.floor(s / 60), s % 60)
+        end
+        totalLbl.Text = "Total:    " .. fmt(totalTime)
+        bestLbl.Text  = "Best Lap: " .. fmt(bestLap)
+        coinLbl.Text  = "Coins:    " .. (coins or 0)
+        overlay.Visible = true
+    end
+
+    return refs
 end
 
 return buildFinishScreen
